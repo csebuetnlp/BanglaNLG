@@ -1,7 +1,7 @@
 # BanglaNLG
 
 This repository contains the official release of the model **"BanglaT5"** and associated downstream finetuning code and datasets introduced in the paper titled [**"BanglaNLG: Benchmarks and Resources for Evaluating Low-Resource
-Natural Language Generation in Bangla"**]().
+Natural Language Generation in Bangla"**](https://arxiv.org/abs/2205.11081).
 
 ## Table of Contents
 
@@ -64,6 +64,15 @@ Contents of this repository are restricted to non-commercial research purposes o
 ## Citation
 If you use any of the datasets, models or code modules, please cite the following paper:
 ```
-
+@article{bhattacharjee2022banglanlg,
+  author    = {Abhik Bhattacharjee and Tahmid Hasan and Wasi Uddin Ahmad and Rifat Shahriyar},
+  title     = {BanglaNLG: Benchmarks and Resources for Evaluating Low-Resource Natural Language Generation in Bangla},
+  journal   = {CoRR},
+  volume    = {abs/2205.11081},
+  year      = {2022},
+  url       = {https://arxiv.org/abs/2205.11081},
+  eprinttype = {arXiv},
+  eprint    = {2205.11081}
+}
 
 ```
