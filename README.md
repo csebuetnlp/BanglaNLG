@@ -1,7 +1,7 @@
 # BanglaNLG
 
 This repository contains the official release of the model **"BanglaT5"** and associated downstream finetuning code and datasets introduced in the paper titled [**"BanglaNLG: Benchmarks and Resources for Evaluating Low-Resource
-Natural Language Generation in Bangla"**](https://arxiv.org/abs/2205.11081).
+Natural Language Generation in Bangla"**]().
 
 ## Table of Contents
 
@@ -58,16 +58,22 @@ See below for task-specific finetuning/inference scripts:
  
 * Supervised fine-tuning
 
-|     Model          |   Params   |     MT (SacreBLEU)    |      TS (ROUGE-2)     |      QA (EM/F1)   |   BNLG score |
-|--------------------|------------|-----------------------|------------------------|-------------------|--------------|
-|[mT5 (base)](https://huggingface.co/google/mt5-base) | 582M  | 36.6/22.5 | 10.27 | 58.95/65.32 | 38.73 |
-|[BanglaT5](https://huggingface.co/csebuetnlp/banglat5) | 247M | 38.8/25.2 | 13.66 | 68.49/74.77 | 44.18 |
+|     Model          |   Params   |     MT (SacreBLEU)    |      TS (ROUGE-2)     |      QA (EM/F1)   |   MD (SacreBLEU-1)  |  NHG (ROUGE-2) |  XLS (ROUGE-2) |   BNLG score |
+|--------------------|------------|-----------------------|------------------------|-------------------|--------------------|----------------|----------------|---------------|
+|[mT5 (base)](https://huggingface.co/google/mt5-base) | 582M  | 36.6/22.5 | 10.3 | 59.0/65.3 | 17.5 |  9.6 | 2.7/0.7 | 24.9 |
+|[XLM-ProphetNet](https://huggingface.co/microsoft/xprophetnet-large-wiki100-cased) | 616M | 23.3/16.4 | 7.8 | 53.0/57.3 | 20.0 | 9.5 | 6.2/2.7 | 21.8 |
+|[mBART-50](https://huggingface.co/facebook/mbart-large-50) | 611M | 23.6/16.7 | 10.4 | 53.4/58.9 | 18.5 | 11.2 | 5.4/3.7 | 22.4 |
+|[IndicBART](https://huggingface.co/ai4bharat/IndicBART) | 244M | 22.7/13.1 | 8.1 | 53.3/58.8 | 14.8 | 7.9 | 6.3/2.5 | 20.8 |
+|[BanglaT5](https://huggingface.co/csebuetnlp/banglat5) | 247M | 38.8/25.2 | 13.7 | 68.5/74.8 | 19.0 | 13.8 | 6.4/4.0 | 29.4 |
 
 
 The benchmarking datasets are as follows:
 * **MT:** **[Machine Translation]()**
-* **ATS:** **[Abstractive Text Summarization]()**
+* **TS:** **[Abstractive Text Summarization]()**
 * **QA:** **[Question Answering]()**
+* **MD:** **[Multi Turn Dialogue Generation]()**
+* **NHG:** **[News Headline Generation]()**
+* **XLS:** **[Cross-lingual Summarization]()**
   
 
 ## License

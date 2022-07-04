@@ -137,7 +137,7 @@ class DataTrainingArguments:
         },
     )
     
-    do_normalize: Optional[bool] = field(default=False, metadata={"help": "Normalize text before feeding to the model."})
+    do_normalize: Optional[bool] = field(default=True, metadata={"help": "Normalize text before feeding to the model."})
     unicode_norm: Optional[str] = field(default="NFKC", metadata={"help": "Type of unicode normalization"})
     lang: Optional[str] = field(default=None, metadata={"help": "Optional language id for bart models"})
     
@@ -455,7 +455,7 @@ def main():
             train_dataset = train_dataset.map(
                 prepare_features,
                 batched=True,
-                batch_size=1 if is_indicbart else training_args.batch_size,
+                batch_size=1 if is_indicbart else training_args.train_batch_size,
                 num_proc=data_args.preprocessing_num_workers,
                 remove_columns=column_names,
                 load_from_cache_file=not data_args.overwrite_cache,
@@ -476,7 +476,7 @@ def main():
             eval_dataset = eval_examples.map(
                 prepare_features,
                 batched=True,
-                batch_size=1 if is_indicbart else training_args.batch_size,
+                batch_size=1 if is_indicbart else training_args.train_batch_size,
                 num_proc=data_args.preprocessing_num_workers,
                 remove_columns=column_names,
                 load_from_cache_file=not data_args.overwrite_cache,
@@ -497,7 +497,7 @@ def main():
             predict_dataset = predict_examples.map(
                 prepare_features,
                 batched=True,
-                batch_size=1 if is_indicbart else training_args.batch_size,
+                batch_size=1 if is_indicbart else training_args.train_batch_size,
                 num_proc=data_args.preprocessing_num_workers,
                 remove_columns=column_names,
                 load_from_cache_file=not data_args.overwrite_cache,

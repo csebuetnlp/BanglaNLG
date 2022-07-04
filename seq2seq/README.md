@@ -39,9 +39,10 @@ $ python ./run_seq2seq.py \
     --logging_strategy "epoch" \
     --save_strategy "epoch" \
     --evaluation_strategy "epoch" \
+    --source_key bn --target_key en \
     --greater_is_better true --load_best_model_at_end \
     --metric_for_best_model sacrebleu --evaluation_metric sacrebleu \
-    --num_train_epochs=20 \ 
+    --num_train_epochs 20 \
     --do_train --do_eval --do_predict \
     --predict_with_generate
 ```

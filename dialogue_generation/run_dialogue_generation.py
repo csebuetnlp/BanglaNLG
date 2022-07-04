@@ -112,7 +112,7 @@ class DataTrainingArguments:
         default=None, metadata={"help": "A csv / tsv / jsonl file containing the validation data."}
     )
     test_file: Optional[str] = field(default=None, metadata={"help": "A csv / tsv / jsonl file containing the test data."})
-    do_normalize: Optional[bool] = field(default=False, metadata={"help": "Normalize text before feeding to the model."})
+    do_normalize: Optional[bool] = field(default=True, metadata={"help": "Normalize text before feeding to the model."})
     unicode_norm: Optional[str] = field(default="NFKC", metadata={"help": "Type of unicode normalization"})
     remove_punct: Optional[bool] = field(
         default=False, metadata={
@@ -439,7 +439,7 @@ def main():
             train_dataset = train_dataset.map(
                 preprocess_function,
                 batched=True,
-                batch_size=1 if is_indicbart else training_args.batch_size,
+                batch_size=1 if is_indicbart else training_args.train_batch_size,
                 num_proc=data_args.preprocessing_num_workers,
                 remove_columns=train_dataset.column_names,
                 load_from_cache_file=not data_args.overwrite_cache,
@@ -457,7 +457,7 @@ def main():
             eval_dataset = eval_dataset.map(
                 preprocess_function,
                 batched=True,
-                batch_size=1 if is_indicbart else training_args.batch_size,
+                batch_size=1 if is_indicbart else training_args.train_batch_size,
                 num_proc=data_args.preprocessing_num_workers,
                 remove_columns=eval_dataset.column_names,
                 load_from_cache_file=not data_args.overwrite_cache,
@@ -475,7 +475,7 @@ def main():
             predict_dataset = predict_dataset.map(
                 preprocess_function,
                 batched=True,
-                batch_size=1 if is_indicbart else training_args.batch_size,
+                batch_size=1 if is_indicbart else training_args.train_batch_size,
                 num_proc=data_args.preprocessing_num_workers,
                 remove_columns=predict_dataset.column_names,
                 load_from_cache_file=not data_args.overwrite_cache,

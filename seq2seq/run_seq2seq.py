@@ -329,8 +329,7 @@ def main():
         model.config.pad_token_id = pad_id
         model.config.bos_token_id = bos_id 
         model.config.eos_token_id = eos_id
-        model.config.decoder_start_token_id = tokenizer._convert_token_to_id_with_added_voc(tokenizer.tgt_lang)
-
+        
     model.resize_token_embeddings(len(tokenizer))
 
     if data_args.source_lang is not None and data_args.target_lang is not None:
@@ -342,6 +341,9 @@ def main():
                 model.config.decoder_start_token_id = tokenizer.lang_code_to_id[data_args.target_lang]
             else:
                 model.config.decoder_start_token_id = tokenizer.convert_tokens_to_ids(data_args.target_lang)
+        elif isinstance(tokenizer, AlbertTokenizer):
+            model.config.decoder_start_token_id = tokenizer._convert_token_to_id_with_added_voc(tokenizer.tgt_lang)
+
 
     prefix = data_args.source_prefix if data_args.source_prefix is not None else ""
 
@@ -371,7 +373,8 @@ def main():
         tokenizer_kwargs = {
             "max_length": data_args.max_source_length, 
             "padding": False,
-            "truncation": True
+            "truncation": True,
+            "return_tensors": "np"
         }
         
         if is_indicbart:
@@ -384,10 +387,15 @@ def main():
         model_inputs = tokenizer(inputs, **tokenizer_kwargs)
 
         if is_indicbart:
-            suffix = f"</s> {tokenizer.src_lang}"
-            suffix_tokens = tokenizer(suffix, **tokenizer_kwargs)["input_ids"][0]
-            model_inputs["input_ids"][:, -2:] = suffix_tokens
-
+            model_inputs["input_ids"] = np.concatenate(
+                (   
+                    model_inputs["input_ids"], 
+                    np.array([[eos_id, tokenizer._convert_token_to_id_with_added_voc(tokenizer.src_lang)]]),
+                ),
+                axis=1
+            )
+            model_inputs.pop("token_type_ids")
+            model_inputs["attention_mask"] = np.ones_like(model_inputs["input_ids"])
 
         if data_args.target_key in examples:
             targets = [normalize(ex, **normalization_kwargs) if data_args.do_normalize else ex
@@ -399,19 +407,20 @@ def main():
                     targets = [UnicodeIndicTransliterator.transliterate(k, code2script[tokenizer.tgt_lang], "hi")
                                 for k in targets]
 
-                targets = [f"{tokenizer.tgt_lang} {k}" for k in targets]
-            
             with tokenizer.as_target_tokenizer():
                 labels = tokenizer(targets, **tokenizer_kwargs)
 
             if is_indicbart:
-                labels["input_ids"][:, -1] = eos_id
-                model_inputs.update({
-                    "labels": labels["input_ids"][:, :-1],
-                    "decoder_input_ids": labels["input_ids"][:, 1:]
-                })
-            else:
-                model_inputs["labels"] = labels["input_ids"]
+                labels["input_ids"] = np.concatenate(
+                    (
+                        labels["input_ids"], 
+                        np.array([[eos_id, tokenizer._convert_token_to_id_with_added_voc(tokenizer.tgt_lang)]])
+                    ),
+                    # LID will get wrapped around through modeling_mbart
+                    axis=1
+                )
+                
+            model_inputs["labels"] = labels["input_ids"]
 
         return model_inputs
 
@@ -426,6 +435,7 @@ def main():
             train_dataset = train_dataset.map(
                 preprocess_function,
                 batched=True,
+                batch_size=1 if is_indicbart else training_args.train_batch_size,
                 num_proc=data_args.preprocessing_num_workers,
                 remove_columns=train_dataset.column_names,
                 load_from_cache_file=not data_args.overwrite_cache,
@@ -443,6 +453,7 @@ def main():
             eval_dataset = eval_dataset.map(
                 preprocess_function,
                 batched=True,
+                batch_size=1 if is_indicbart else training_args.train_batch_size,
                 num_proc=data_args.preprocessing_num_workers,
                 remove_columns=eval_dataset.column_names,
                 load_from_cache_file=not data_args.overwrite_cache,
@@ -460,6 +471,7 @@ def main():
             predict_dataset = predict_dataset.map(
                 preprocess_function,
                 batched=True,
+                batch_size=1 if is_indicbart else training_args.train_batch_size,
                 num_proc=data_args.preprocessing_num_workers,
                 remove_columns=predict_dataset.column_names,
                 load_from_cache_file=not data_args.overwrite_cache,
@@ -469,6 +481,7 @@ def main():
     data_collator = DataCollatorForSeq2Seq(
         tokenizer,
         model=model,
+        padding=True,
         label_pad_token_id=tokenizer.pad_token_id,
         pad_to_multiple_of=8 if training_args.fp16 else None,
     )

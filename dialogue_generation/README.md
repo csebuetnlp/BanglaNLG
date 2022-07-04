@@ -40,7 +40,7 @@ $ python ./run_dialogue_generation.py \
     --evaluation_strategy "epoch" \
     --greater_is_better true --load_best_model_at_end \
     --metric_for_best_model sacrebleu --evaluation_metric sacrebleu \
-    --num_train_epochs=5 \ 
+    --num_train_epochs=5 \
     --do_train --do_eval --do_predict \
     --predict_with_generate
 ```
