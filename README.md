@@ -37,14 +37,28 @@ $ bash setup.sh
 
 ## Training & Evaluation
 
-We will add the finetuning scripts soon. Stay tuned!
+While all tasks we consider are modeled as seq2seq tasks, some tasks need specific data preprocessing for preparing the input and output sequences.
+See below for task-specific finetuning/inference scripts:
 
-
+* **[Sequence To Sequence](seq2seq/).**
+  - For general sequence to sequence tasks such as
+    - Machine Translation
+    - Text Summarization 
+    - News Headline Generation etc.
+- **[Question Answering](question_answering/).**
+    - For tasks such as,
+      - Extractive Question Answering
+      - Open-domain Question Answering
+- **[Dialogue Generation](dialogue_generation/).**
+    - For tasks such as,
+      - Single Turn Dialogue
+      - Multi Turn Dialogue
+  
 ## Benchmarks
  
 * Supervised fine-tuning
 
-|     Model          |   Params   |     MT (SacreBLEU)    |      ATS (ROUGE-2)     |      QA (EM/F1)   |   BNLG score |
+|     Model          |   Params   |     MT (SacreBLEU)    |      TS (ROUGE-2)     |      QA (EM/F1)   |   BNLG score |
 |--------------------|------------|-----------------------|------------------------|-------------------|--------------|
 |[mT5 (base)](https://huggingface.co/google/mt5-base) | 582M  | 36.6/22.5 | 10.27 | 58.95/65.32 | 38.73 |
 |[BanglaT5](https://huggingface.co/csebuetnlp/banglat5) | 247M | 38.8/25.2 | 13.66 | 68.49/74.77 | 44.18 |
@@ -64,6 +78,14 @@ Contents of this repository are restricted to non-commercial research purposes o
 ## Citation
 If you use any of the datasets, models or code modules, please cite the following paper:
 ```
-
-
+@article{bhattacharjee2022banglanlg,
+  author    = {Abhik Bhattacharjee and Tahmid Hasan and Wasi Uddin Ahmad and Rifat Shahriyar},
+  title     = {BanglaNLG: Benchmarks and Resources for Evaluating Low-Resource Natural Language Generation in Bangla},
+  journal   = {CoRR},
+  volume    = {abs/2205.11081},
+  year      = {2022},
+  url       = {https://arxiv.org/abs/2205.11081},
+  eprinttype = {arXiv},
+  eprint    = {2205.11081}
+}
 ```

@@ -1,0 +1,58 @@
+## Data format
+
+For local files, the finetuning script supports only `json` as input file format. The input file structure should be the same as standard QA datasets like [SQuAD v2.0](). 
+
+To view sample input files, see the files **[here](sample_inputs/).**
+
+## Training & Evaluation
+
+To see list of all available options, do `python run_question_answering.py -h`. There are three ways to provide input data files to the script:
+
+* with flag `--dataset_dir <path>` where `<path>` points to the directory containing files with prefix `train`, `validation` and `test`.
+* with flags `--train_file <path>` / `--train_file <path>` / `--validation_file <path>` / `--test_file <path>`.
+* with a dataset from [Huggingface Datasets]() Library, usng the keys `--dataset_name <name>` and  `dataset_config_name <name>` (optional)
+
+For the following commands, we are going to use the `--dataset_dir <path>` to provide input files.
+
+
+### Finetuning
+For finetuning and inference on the test set using the best model during validation (on single GPU), a minimal example is as follows:
+
+```bash
+$ python ./run_question_answering.py \
+    --model_name_or_path "csebuetnlp/banglat5" \
+    --dataset_dir "sample_inputs/" \
+    --output_dir "outputs/" \
+    --learning_rate=5e-4 \
+    --warmup_ratio 0.1 \
+    --label_smoothing_factor 0.1 \
+    --gradient_accumulation_steps 4 \
+    --weight_decay 0.1 \
+    --lr_scheduler_type "linear"  \
+    --per_device_train_batch_size=8 \
+    --per_device_eval_batch_size=8 \
+    --max_source_length 512 \
+    --max_target_length 30 \
+    --logging_strategy "epoch" \
+    --save_strategy "epoch" \
+    --evaluation_strategy "epoch" \
+    --greater_is_better true --load_best_model_at_end \
+    --metric_for_best_model f1 \
+    --num_train_epochs=5 \ 
+    --do_train --do_eval --do_predict \
+    --predict_with_generate
+```
+
+
+### Evaluation
+* To calculate metrics on test set / inference on raw data, use the following snippet:
+
+```bash
+$ python ./run_question_answering.py \
+    --model_name_or_path <path/to/trained/model> \
+    --dataset_dir "sample_inputs/" \
+    --output_dir "outputs/" \
+    --per_device_eval_batch_size=8 \
+    --overwrite_output_dir \
+    --do_predict --predict_with_generate
+```
