@@ -68,12 +68,12 @@ See below for task-specific finetuning/inference scripts:
 
 
 The benchmarking datasets are as follows:
-* **MT:** **[Machine Translation]()**
-* **TS:** **[Abstractive Text Summarization]()**
-* **QA:** **[Question Answering]()**
+* **MT:** **[Machine Translation](https://github.com/csebuetnlp/banglanmt#datasets)**
+* **TS:** **[Abstractive Text Summarization](https://huggingface.co/datasets/csebuetnlp/xlsum)**
+* **QA:** **[Question Answering](https://huggingface.co/datasets/csebuetnlp/squad_bn)**
 * **MD:** **[Multi Turn Dialogue Generation]()**
-* **NHG:** **[News Headline Generation]()**
-* **XLS:** **[Cross-lingual Summarization]()**
+* **NHG:** **[News Headline Generation](https://huggingface.co/datasets/csebuetnlp/xlsum)**
+* **XLS:** **[Cross-lingual Summarization](https://huggingface.co/datasets/csebuetnlp/CrossSum)**
   
 
 ## License
