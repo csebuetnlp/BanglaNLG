@@ -20,6 +20,14 @@ The **BanglaT5** model checkpoint is available at [Huggingface model hub](https:
   
 To use this model for the supported downstream tasks in this repository see **[Training & Evaluation](#training--evaluation).**
 
+We also release the following finetuned checkpoints:
+Model Name        |Task name|
+--------------|-------------|
+[banglat5_nmt_bn_en](https://huggingface.co/csebuetnlp/banglat5_nmt_bn_en)| Bengali-English MT |
+[banglat5_nmt_en_bn](https://huggingface.co/csebuetnlp/banglat5_nmt_en_bn)| English-Bengali MT |
+
+
+
 ***Note:*** This model was pretrained using a ***specific normalization pipeline*** available **[here](https://github.com/csebuetnlp/normalizer)**. All finetuning scripts in this repository uses this normalization by default. If you need to adapt the pretrained model for a different task make sure ***the text units are normalized using this pipeline before tokenizing*** to get best results. A basic example is available at the **[model page](https://huggingface.co/csebuetnlp/banglat5).**
 
 
@@ -71,7 +79,7 @@ The benchmarking datasets are as follows:
 * **MT:** **[Machine Translation](https://github.com/csebuetnlp/banglanmt#datasets)**
 * **TS:** **[Abstractive Text Summarization](https://huggingface.co/datasets/csebuetnlp/xlsum)**
 * **QA:** **[Question Answering](https://huggingface.co/datasets/csebuetnlp/squad_bn)**
-* **MD:** **[Multi Turn Dialogue Generation]()**
+* **MD:** **[Multi Turn Dialogue Generation](https://drive.google.com/file/d/1qPmNN6qA4evbh4cD_BDDTCFOwMu4H2JS/view?usp=sharing)**
 * **NHG:** **[News Headline Generation](https://huggingface.co/datasets/csebuetnlp/xlsum)**
 * **XLS:** **[Cross-lingual Summarization](https://huggingface.co/datasets/csebuetnlp/CrossSum)**
   
