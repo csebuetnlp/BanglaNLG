@@ -32,7 +32,7 @@ fi
 if [[ "$MODEL" = "facebook/mbart-large-50" ]]; then
     BN_CODE="bn_IN"
     EN_CODE="en_XX"
-elif [[ "$MODEL" = "ai4bharat/IndicBART" ]]; then
+elif [[ "$MODEL" = *"IndicBART"* ]]; then
     BN_CODE="<2bn>"
     EN_CODE="<2en>"
 fi
@@ -46,7 +46,7 @@ else
 fi
 
 OPTIONAL_ARGS=()
-if [[ "$MODEL" = "facebook/mbart-large-50" || "$MODEL" = "ai4bharat/IndicBART" ]]; then
+if [[ "$MODEL" = "facebook/mbart-large-50" || "$MODEL" = *"IndicBART"* ]]; then
     OPTIONAL_ARGS=(
         "--source_lang ${SRC_CODE}"
         "--target_lang ${TGT_CODE}"

@@ -114,7 +114,7 @@ class DataTrainingArguments:
         default=None, metadata={"help": "A csv / tsv / jsonl file containing the validation data."}
     )
     test_file: Optional[str] = field(default=None, metadata={"help": "A csv / tsv / jsonl file containing the test data."})
-    do_normalize: Optional[bool] = field(default=True, metadata={"help": "Normalize text before feeding to the model."})
+    do_normalize: Optional[bool] = field(default=False, metadata={"help": "Normalize text before feeding to the model."})
     unicode_norm: Optional[str] = field(default="NFKC", metadata={"help": "Type of unicode normalization"})
     remove_punct: Optional[bool] = field(
         default=False, metadata={
@@ -138,8 +138,8 @@ class DataTrainingArguments:
         default="target", metadata={"help": "Key / column name in the input file corresponding to the target data"}
     )
 
-    source_lang: str = field(default=None, metadata={"help": "Source language id."})
-    target_lang: str = field(default=None, metadata={"help": "Target language id."})
+    source_lang: Optional[str] = field(default=None, metadata={"help": "Source language id."})
+    target_lang: Optional[str] = field(default=None, metadata={"help": "Target language id."})
 
     preprocessing_num_workers: Optional[int] = field(
         default=None,
@@ -314,9 +314,28 @@ def main():
 
     # whether this model is indicbart or its derivative
     is_indicbart = False
+    # whether this model is the unified_script variant of IndicBART
+    is_unified = False
+
     if isinstance(model, MBartForConditionalGeneration) and isinstance(tokenizer, AlbertTokenizer):
         is_indicbart = True
         from indicnlp.transliterate.unicode_transliterate import UnicodeIndicTransliterator
+        import unicodedata
+        from collections import Counter
+
+        def get_token_family(token):
+            names = Counter([unicodedata.name(c, 'UNKNOWN').split()[0] for c in token])
+            return names.most_common(1)[0][0]
+
+        family2count = Counter([get_token_family(t) for t in tokenizer.get_vocab()])
+        # enumerating most probable families to allow for moderate vocab change
+        ss_requred_unicode_families = ["BENGALI", "TAMIL", "MALAYALAM", "TELUGU", "GURMUKHI", "KANNADA", "GUJARATI", "ORIYA"]
+        required_unicode_tokens = sum(family2count.get(k, 0) for k in ss_requred_unicode_families)
+
+        if family2count.get("DEVANAGARI", 0) > required_unicode_tokens:
+            is_unified = True
+        
+        logger.info(f"IndicBART variant: {'US' if is_unified else 'SS'}")
 
         code2script = {f"<2{k}>": k for k in ['as', 'bn', 'gu', 'hi', 'kn', 'ml', 'mr', 'or', 'pa', 'ta', 'te']}
         bos_id = tokenizer._convert_token_to_id_with_added_voc("<s>")
@@ -378,7 +397,7 @@ def main():
         }
         
         if is_indicbart:
-            if tokenizer.src_lang in code2script:
+            if is_unified and tokenizer.src_lang in code2script:
                 inputs = [UnicodeIndicTransliterator.transliterate(k, code2script[tokenizer.src_lang], "hi")
                             for k in inputs]
 
@@ -402,10 +421,10 @@ def main():
                         for ex in examples[data_args.target_key]]
 
             tokenizer_kwargs.update({"max_length": max_target_length})
-            if is_indicbart:
-                if tokenizer.tgt_lang in code2script:
-                    targets = [UnicodeIndicTransliterator.transliterate(k, code2script[tokenizer.tgt_lang], "hi")
-                                for k in targets]
+            
+            if is_unified and tokenizer.tgt_lang in code2script :
+                targets = [UnicodeIndicTransliterator.transliterate(k, code2script[tokenizer.tgt_lang], "hi")
+                            for k in targets]
 
             with tokenizer.as_target_tokenizer():
                 labels = tokenizer(targets, **tokenizer_kwargs)
@@ -496,6 +515,13 @@ def main():
     def add_newline_to_end_of_each_sentence(x):
         return "\n".join(nltk.sent_tokenize(x))
 
+    def process_decoded_lines(lines):
+        if is_unified and tokenizer.tgt_lang in code2script:
+            lines = [UnicodeIndicTransliterator.transliterate(k, "hi", code2script[tokenizer.tgt_lang])
+                            for k in lines]
+
+        return lines
+
 
     def calculate_rouge(
         pred_lns,
@@ -552,8 +578,8 @@ def main():
 
         labels = np.where(labels != -100, labels, tokenizer.pad_token_id)
     
-        decoded_preds = tokenizer.batch_decode(preds, skip_special_tokens=True)
-        decoded_labels = tokenizer.batch_decode(labels, skip_special_tokens=True)
+        decoded_preds = process_decoded_lines(tokenizer.batch_decode(preds, skip_special_tokens=True))
+        decoded_labels = process_decoded_lines(tokenizer.batch_decode(labels, skip_special_tokens=True))
 
         result = metric_fn(decoded_preds, decoded_labels)
         prediction_lens = [np.count_nonzero(pred != tokenizer.pad_token_id) for pred in preds]
@@ -629,8 +655,10 @@ def main():
 
         if trainer.is_world_process_zero():
             if training_args.predict_with_generate:
-                predictions = tokenizer.batch_decode(
-                    predict_results.predictions, skip_special_tokens=True, clean_up_tokenization_spaces=True
+                predictions = process_decoded_lines(
+                    tokenizer.batch_decode(
+                        predict_results.predictions, skip_special_tokens=True, clean_up_tokenization_spaces=True
+                    )
                 )
                 predictions = [pred.strip() for pred in predictions]
                 output_prediction_file = os.path.join(training_args.output_dir, "generated_predictions.txt")

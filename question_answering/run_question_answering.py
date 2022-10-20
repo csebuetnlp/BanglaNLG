@@ -111,8 +111,11 @@ class DataTrainingArguments:
             "which is used during ``evaluate`` and ``predict``."
         },
     )
-    source_prefix: Optional[str] = field(
-        default=None, metadata={"help": "A prefix to add before every source text."}
+    question_prefix: Optional[str] = field(
+        default="প্রশ্ন: ", metadata={"help": "A prefix to add before question text."}
+    )
+    context_prefix: Optional[str] = field(
+        default="প্রসঙ্গ: ", metadata={"help": "A prefix to add before context text."}
     )
 
     max_train_samples: Optional[int] = field(
@@ -273,9 +276,28 @@ def main():
 
     # whether this model is indicbart or its derivative
     is_indicbart = False
+    # whether this model is the unified_script variant of IndicBART
+    is_unified = False
+
     if isinstance(model, MBartForConditionalGeneration) and isinstance(tokenizer, AlbertTokenizer):
         is_indicbart = True
         from indicnlp.transliterate.unicode_transliterate import UnicodeIndicTransliterator
+        import unicodedata
+        from collections import Counter
+
+        def get_token_family(token):
+            names = Counter([unicodedata.name(c, 'UNKNOWN').split()[0] for c in token])
+            return names.most_common(1)[0][0]
+
+        family2count = Counter([get_token_family(t) for t in tokenizer.get_vocab()])
+        # enumerating most probable families to allow for moderate vocab change
+        ss_requred_unicode_families = ["BENGALI", "TAMIL", "MALAYALAM", "TELUGU", "GURMUKHI", "KANNADA", "GUJARATI", "ORIYA"]
+        required_unicode_tokens = sum(family2count.get(k, 0) for k in ss_requred_unicode_families)
+
+        if family2count.get("DEVANAGARI", 0) > required_unicode_tokens:
+            is_unified = True
+        
+        logger.info(f"IndicBART variant: {'US' if is_unified else 'SS'}")
 
         code2script = {f"<2{k}>": k for k in ['as', 'bn', 'gu', 'hi', 'kn', 'ml', 'mr', 'or', 'pa', 'ta', 'te']}
         bos_id = tokenizer._convert_token_to_id_with_added_voc("<s>")
@@ -307,7 +329,7 @@ def main():
 
 
     
-    prefix = data_args.source_prefix if data_args.source_prefix is not None else ""
+    # prefix = data_args.source_prefix if data_args.source_prefix is not None else ""
 
     if training_args.do_train:
         column_names = raw_datasets["train"].column_names
@@ -380,8 +402,8 @@ def main():
             "truncation": "only_second" if pad_on_right else "only_first",
         }
 
-        questions = examples[question_column_name]
-        contexts = examples[context_column_name]
+        questions = [data_args.question_prefix + k for k in examples[question_column_name]]
+        contexts = [data_args.context_prefix + k for k in examples[context_column_name]]
         answers = []
         
         for ans in examples[answer_column_name]:
@@ -389,8 +411,8 @@ def main():
             answers.append(ans)
         
         if is_indicbart:
-            if tokenizer.src_lang in code2script:
-                questions = [UnicodeIndicTransliterator.transliterate(k, code2script[tokenizer.src_lang], "hi") + f" {tokenizer.eos_token} "
+            if is_unified and tokenizer.src_lang in code2script:
+                questions = [UnicodeIndicTransliterator.transliterate(k, code2script[tokenizer.src_lang], "hi")
                                 for k in questions]
                 contexts = [UnicodeIndicTransliterator.transliterate(k, code2script[tokenizer.src_lang], "hi")
                                 for k in contexts]
@@ -401,7 +423,7 @@ def main():
     
 
         tokenized_examples = tokenizer(
-            [prefix + k for k in questions] if pad_on_right else [prefix + k for k in contexts],
+            questions if pad_on_right else contexts,
             contexts if pad_on_right else questions,
             **tokenizer_kwargs
         )
@@ -518,6 +540,13 @@ def main():
         for index in random.sample(range(len(train_dataset)), 3):
             logger.info(f"Sample {index} of the training set: {train_dataset[index]}.")
 
+    def process_decoded_lines(lines):
+        if is_unified and tokenizer.tgt_lang in code2script:
+            lines = [UnicodeIndicTransliterator.transliterate(k, "hi", code2script[tokenizer.tgt_lang])
+                            for k in lines]
+
+        return lines
+    
     def post_processing_function(examples, predictions, stage="eval"):
         all_predictions = {}
         example_index_to_id = {i: k for i, k in enumerate(examples["id"])}
@@ -529,7 +558,9 @@ def main():
         if isinstance(predictions, tuple):
             predictions = predictions[0]
 
-        decoded_preds = tokenizer.batch_decode(predictions, skip_special_tokens=True)
+        decoded_preds = process_decoded_lines(
+            tokenizer.batch_decode(predictions, skip_special_tokens=True)
+        )
         for i, pred in tqdm(enumerate(decoded_preds)):
             all_predictions[example_index_to_id[i]] = pred
 
