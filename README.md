@@ -8,6 +8,7 @@ Natural Language Generation in Bangla"**]().
 - [BanglaNLG](#banglanlg)
   - [Table of Contents](#table-of-contents)
   - [Models](#models)
+  - [Datasets](#datasets)
   - [Setup](#setup)
   - [Training & Evaluation](#training--evaluation)
   - [Benchmarks](#benchmarks)
@@ -30,6 +31,15 @@ Model Name        |Task name|
 
 ***Note:*** This model was pretrained using a ***specific normalization pipeline*** available **[here](https://github.com/csebuetnlp/normalizer)**. All finetuning scripts in this repository uses this normalization by default. If you need to adapt the pretrained model for a different task make sure ***the text units are normalized using this pipeline before tokenizing*** to get best results. A basic example is available at the **[model page](https://huggingface.co/csebuetnlp/banglat5).**
 
+## Datasets
+
+The benchmarking datasets are as follows:
+* **MT:** **[Machine Translation](https://github.com/csebuetnlp/banglanmt#datasets)**
+* **TS:** **[Abstractive Text Summarization](https://huggingface.co/datasets/csebuetnlp/xlsum)**
+* **QA:** **[Question Answering](https://huggingface.co/datasets/csebuetnlp/squad_bn)**
+* **MTD:** **[Multi Turn Dialogue Generation](https://drive.google.com/file/d/1qPmNN6qA4evbh4cD_BDDTCFOwMu4H2JS/view?usp=sharing)** (**Introduced in this work**)
+* **NHG:** **[News Headline Generation](https://huggingface.co/datasets/csebuetnlp/xlsum)**
+* **XLS:** **[Cross-lingual Summarization](https://huggingface.co/datasets/csebuetnlp/CrossSum)**
 
 ## Setup
 
@@ -66,24 +76,15 @@ See below for task-specific finetuning/inference scripts:
  
 * Supervised fine-tuning
 
-|     Model          |   Params   |     MT (SacreBLEU)    |      TS (ROUGE-2)     |      QA (EM/F1)   |   MD (SacreBLEU-1)  |  NHG (ROUGE-2) |  XLS (ROUGE-2) |   BNLG score |
-|--------------------|------------|-----------------------|------------------------|-------------------|--------------------|----------------|----------------|---------------|
-|[mT5 (base)](https://huggingface.co/google/mt5-base) | 582M  | 36.6/22.5 | 10.3 | 59.0/65.3 | 17.5 |  9.6 | 2.7/0.7 | 24.9 |
-|[XLM-ProphetNet](https://huggingface.co/microsoft/xprophetnet-large-wiki100-cased) | 616M | 23.3/16.4 | 7.8 | 53.0/57.3 | 20.0 | 9.5 | 6.2/2.7 | 21.8 |
-|[mBART-50](https://huggingface.co/facebook/mbart-large-50) | 611M | 23.6/16.7 | 10.4 | 53.4/58.9 | 18.5 | 11.2 | 5.4/3.7 | 22.4 |
-|[IndicBART](https://huggingface.co/ai4bharat/IndicBART) | 244M | 22.7/13.1 | 8.1 | 53.3/58.8 | 14.8 | 7.9 | 6.3/2.5 | 20.8 |
-|[BanglaT5](https://huggingface.co/csebuetnlp/banglat5) | 247M | 38.8/25.2 | 13.7 | 68.5/74.8 | 19.0 | 13.8 | 6.4/4.0 | 29.4 |
-
-
-The benchmarking datasets are as follows:
-* **MT:** **[Machine Translation](https://github.com/csebuetnlp/banglanmt#datasets)**
-* **TS:** **[Abstractive Text Summarization](https://huggingface.co/datasets/csebuetnlp/xlsum)**
-* **QA:** **[Question Answering](https://huggingface.co/datasets/csebuetnlp/squad_bn)**
-* **MD:** **[Multi Turn Dialogue Generation](https://drive.google.com/file/d/1qPmNN6qA4evbh4cD_BDDTCFOwMu4H2JS/view?usp=sharing)**
-* **NHG:** **[News Headline Generation](https://huggingface.co/datasets/csebuetnlp/xlsum)**
-* **XLS:** **[Cross-lingual Summarization](https://huggingface.co/datasets/csebuetnlp/CrossSum)**
+|     Model          |   Params   |     MT (SacreBLEU)    |      TS (ROUGE-2)     |      QA (EM/F1)   |   MTD (SacreBLEU-1)  |  NHG (ROUGE-2) |  XLS (ROUGE-2) |
+|--------------------|------------|-----------------------|------------------------|-------------------|--------------------|----------------|----------------|
+|[mT5 (base)](https://huggingface.co/google/mt5-base) | 582M  | 30.1/17.2 | 10.3 | 59.0/65.3 | 17.5 |  9.6 | 2.7/0.7 |
+|[XLM-ProphetNet](https://huggingface.co/microsoft/xprophetnet-large-wiki100-cased) | 616M | 27.5/15.4 | 7.8 | 53.0/57.3 | 20.0 | 9.5 | 6.2/2.7 |
+|[mBART-50](https://huggingface.co/facebook/mbart-large-50) | 611M | 29.7/15.5 | 10.4 | 53.4/58.9 | 18.5 | 11.2 | 5.4/3.7 |
+|[IndicBART (unified)](https://huggingface.co/ai4bharat/IndicBART) | 244M | 28.1/16.6 | 8.9 | 59.6/65.6 | 14.8 | 7.9 | 6.3/2.5 |
+|[IndicBART (separate)](https://huggingface.co/ai4bharat/IndicBARTSS) | 244M | 27.5/15.7 | 9.2 | 55.3/61.2 | 14.1 | 9.1 | 5.3/2.4 |
+|[BanglaT5](https://huggingface.co/csebuetnlp/banglat5) | 247M | 31.3/17.4 | 13.7 | 68.5/74.8 | 19.0 | 13.8 | 6.4/4.0 |
   
-
 ## License
 Contents of this repository are restricted to non-commercial research purposes only under the [Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License (CC BY-NC-SA 4.0)](https://creativecommons.org/licenses/by-nc-sa/4.0/). 
 
