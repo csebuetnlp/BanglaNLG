@@ -1,7 +1,7 @@
 # BanglaNLG
 
 This repository contains the official release of the model **"BanglaT5"** and associated downstream finetuning code and datasets introduced in the paper titled [**"BanglaNLG: Benchmarks and Resources for Evaluating Low-Resource
-Natural Language Generation in Bangla"**]().
+Natural Language Generation in Bangla"**](https://arxiv.org/abs/2205.11081).
 
 ## Table of Contents
 
