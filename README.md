@@ -1,7 +1,8 @@
 # BanglaNLG
 
-This repository contains the official release of the model **"BanglaT5"** and associated downstream finetuning code and datasets introduced in the paper titled [**"BanglaNLG: Benchmarks and Resources for Evaluating Low-Resource
-Natural Language Generation in Bangla"**](https://arxiv.org/abs/2205.11081).
+This repository contains the official release of the model **"BanglaT5"** and associated downstream finetuning code and datasets introduced in the paper titled [**"BanglaNLG and BanglaT5: Benchmarks and Resources for Evaluating Low-Resource
+Natural Language Generation in Bangla"**](https://arxiv.org/abs/2205.11081) accepted in the 17th Conference of the European Chapter
+of the Association for Computational Linguistics (EACL 2023).
 
 ## Table of Contents
 
