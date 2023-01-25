@@ -42,6 +42,8 @@ The benchmarking datasets are as follows:
 * **NHG:** **[News Headline Generation](https://huggingface.co/datasets/csebuetnlp/xlsum)**
 * **XLS:** **[Cross-lingual Summarization](https://huggingface.co/datasets/csebuetnlp/CrossSum)**
 
+Please see the **[BanglaBERT repository](https://github.com/csebuetnlp/banglabert#datasets)** to access the pretraining corpus.
+
 ## Setup
 
 For installing the necessary requirements, use the following snippet
