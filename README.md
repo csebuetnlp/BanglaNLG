@@ -4,6 +4,9 @@ This repository contains the official release of the model **"BanglaT5"** and as
 Natural Language Generation in Bangla"**](https://arxiv.org/abs/2205.11081) accepted in the 17th Conference of the European Chapter
 of the Association for Computational Linguistics (EACL 2023).
 
+## Updates
+* We have released [BanglaT5 (small)](https://huggingface.co/csebuetnlp/banglat5_small). It can be fine-tuned with as little as 4 GB VRAM!
+
 ## Table of Contents
 
 - [BanglaNLG](#banglanlg)
