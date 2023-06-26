@@ -1,7 +1,7 @@
 # BanglaNLG
 
 This repository contains the official release of the model **"BanglaT5"** and associated downstream finetuning code and datasets introduced in the paper titled [**"BanglaNLG and BanglaT5: Benchmarks and Resources for Evaluating Low-Resource
-Natural Language Generation in Bangla"**](https://arxiv.org/abs/2205.11081) accepted in the 17th Conference of the European Chapter
+Natural Language Generation in Bangla"**](https://aclanthology.org/2023.findings-eacl.54/) accepted in the 17th Conference of the European Chapter
 of the Association for Computational Linguistics (EACL 2023).
 
 ## Updates
@@ -99,14 +99,19 @@ Contents of this repository are restricted to non-commercial research purposes o
 ## Citation
 If you use any of the datasets, models or code modules, please cite the following paper:
 ```
-@article{bhattacharjee2022banglanlg,
-  author    = {Abhik Bhattacharjee and Tahmid Hasan and Wasi Uddin Ahmad and Rifat Shahriyar},
-  title     = {BanglaNLG: Benchmarks and Resources for Evaluating Low-Resource Natural Language Generation in Bangla},
-  journal   = {CoRR},
-  volume    = {abs/2205.11081},
-  year      = {2022},
-  url       = {https://arxiv.org/abs/2205.11081},
-  eprinttype = {arXiv},
-  eprint    = {2205.11081}
+@inproceedings{bhattacharjee-etal-2023-banglanlg,
+    title = "{B}angla{NLG} and {B}angla{T}5: Benchmarks and Resources for Evaluating Low-Resource Natural Language Generation in {B}angla",
+    author = "Bhattacharjee, Abhik  and
+      Hasan, Tahmid  and
+      Ahmad, Wasi Uddin  and
+      Shahriyar, Rifat",
+    booktitle = "Findings of the Association for Computational Linguistics: EACL 2023",
+    month = may,
+    year = "2023",
+    address = "Dubrovnik, Croatia",
+    publisher = "Association for Computational Linguistics",
+    url = "https://aclanthology.org/2023.findings-eacl.54",
+    pages = "726--735",
+    abstract = "This work presents {`}BanglaNLG,{'} a comprehensive benchmark for evaluating natural language generation (NLG) models in Bangla, a widely spoken yet low-resource language. We aggregate six challenging conditional text generation tasks under the BanglaNLG benchmark, introducing a new dataset on dialogue generation in the process. Furthermore, using a clean corpus of 27.5 GB of Bangla data, we pretrain {`}BanglaT5{'}, a sequence-to-sequence Transformer language model for Bangla. BanglaT5 achieves state-of-the-art performance in all of these tasks, outperforming several multilingual models by up to 9{\%} absolute gain and 32{\%} relative gain. We are making the new dialogue dataset and the BanglaT5 model publicly available at https://github.com/csebuetnlp/BanglaNLG in the hope of advancing future research on Bangla NLG.",
 }
 ```
