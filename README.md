@@ -41,7 +41,7 @@ The benchmarking datasets are as follows:
 * **MT:** **[Machine Translation](https://github.com/csebuetnlp/banglanmt#datasets)**
 * **TS:** **[Abstractive Text Summarization](https://huggingface.co/datasets/csebuetnlp/xlsum)**
 * **QA:** **[Question Answering](https://huggingface.co/datasets/csebuetnlp/squad_bn)**
-* **MTD:** **[Multi Turn Dialogue Generation](https://drive.google.com/file/d/1qPmNN6qA4evbh4cD_BDDTCFOwMu4H2JS/view?usp=sharing)** (**Introduced in this work**)
+* **MTD:** **[Multi Turn Dialogue Generation](https://huggingface.co/datasets/csebuetnlp/dailydialogue_bn)** (**Introduced in this work**)
 * **NHG:** **[News Headline Generation](https://huggingface.co/datasets/csebuetnlp/xlsum)**
 * **XLS:** **[Cross-lingual Summarization](https://huggingface.co/datasets/csebuetnlp/CrossSum)**
 
